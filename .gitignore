@@ -1,0 +1,28 @@
+# Archivos y carpetas de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# Entorno virtual (común: venv, .venv, env, etc.)
+venv/
+.venv/
+env/
+ENV/
+
+# Archivos de entorno
+.env
+.env.*
+Pipfile.lock
+
+# Archivos de configuración de VS Code
+.vscode/
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
