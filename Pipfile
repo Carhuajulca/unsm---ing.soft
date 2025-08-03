@@ -16,6 +16,7 @@ passlib = {extras = ["bcrypt"], version = "*"}
 python-dotenv = "*"
 pydantic-settings = "*"
 alembic = "*"
+pydantic = {extras = ["email"], version = "*"}
 
 [dev-packages]
 
