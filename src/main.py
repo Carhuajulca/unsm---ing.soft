@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Mi Primera API", version="1.0.0", lifespan=lifespan)
-app.include_router(user_router, prefix="/api/v1/users", tags=["users"])
+app.include_router(user_router, prefix="/api/v1/users", tags=["users apis"])
 
 
 
