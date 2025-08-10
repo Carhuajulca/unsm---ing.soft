@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
-from src.repositories.users.user_repository import UserRepository
+from src.repositories.user_repository import UserRepository
 from src.schemas.users.user import UserCreate, UserUpdate
-from src.models.model import User
+from src.models.users import User
 from typing import List, Optional
 
 class UserService:

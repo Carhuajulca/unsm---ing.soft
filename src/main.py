@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from src.database import engine, Base
-from src.models.model import User
+from src.models.users import User
 from contextlib import asynccontextmanager
-from src.api.v1.users.user import router as user_router
+from src.api.v1.user import router as user_router
 
 
 @asynccontextmanager

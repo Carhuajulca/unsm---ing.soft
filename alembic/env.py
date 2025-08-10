@@ -14,7 +14,7 @@ load_dotenv()
 
 # Importar Base de modelos
 from src.database import Base # Ajusta si tu Base está en otro archivo
-import src.models.model # Importa todos los modelos para que Alembic los detecte
+import models.users # Importa todos los modelos para que Alembic los detecte
 
 # Configuración de Alembic
 config = context.config

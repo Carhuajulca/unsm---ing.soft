@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func
-from src.models.model import User
+from src.models.users import User
 from typing import List, Optional
-from ..base_repository import BaseRepository
+from .base_repository import BaseRepository
 
 class UserRepository(BaseRepository[User]):
     def __init__(self, db: AsyncSession):
