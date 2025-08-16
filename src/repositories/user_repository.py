@@ -10,6 +10,7 @@ class UserRepository(BaseRepository[User]):
 
     async def create(self, user_data: dict) -> User:
         """Crear usuario en la base de datos"""
+       
         db_user = User(**user_data)
         self.db.add(db_user)
         await self.db.commit()
@@ -26,9 +27,14 @@ class UserRepository(BaseRepository[User]):
         result = await self.db.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()
 
-    async def get_by_username(self, username: str) -> Optional[User]:
-        """Obtener usuario por username"""
-        result = await self.db.execute(select(User).where(User.name == username))
+    async def get_by_username(self, first_name: str) -> Optional[User]:
+        """Obtener usuario por nombre de usuario"""
+        result = await self.db.execute(select(User).where(User.first_name == first_name))
+        return result.scalar_one_or_none()
+    
+    async def get_by_username(self, last_name: str) -> Optional[User]:
+        """Obtener usuario por apellido"""
+        result = await self.db.execute(select(User).where(User.first_name == last_name))
         return result.scalar_one_or_none()
 
     async def get_all(

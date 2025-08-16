@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_db
 from src.repositories.user_repository import UserRepository
 from src.services.user_service import UserService
-from src.schemas.users.user import UserCreate, UserUpdate, UserResponse
+from src.schemas.user_schema import UserCreateSchema, UserUpdateSchema, UserResponseSchema
 from typing import List, Optional
 
 router = APIRouter()
@@ -13,15 +13,15 @@ async def get_user_service(db: AsyncSession = Depends(get_db)) -> UserService:
     user_repository = UserRepository(db)
     return UserService(user_repository)
 
-@router.post("/", response_model=UserResponse)
+@router.post("/", response_model=UserResponseSchema)
 async def create_user(
-    user_data: UserCreate,
+    user_data: UserCreateSchema,
     user_service: UserService = Depends(get_user_service)
 ):
     """Crear un nuevo usuario"""
     return await user_service.create_user(user_data)
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserResponseSchema)
 async def get_user(
     user_id: int,
     user_service: UserService = Depends(get_user_service)
@@ -29,7 +29,7 @@ async def get_user(
     """Obtener usuario por ID"""
     return await user_service.get_user_by_id(user_id)
 
-@router.get("/", response_model=List[UserResponse])
+@router.get("/", response_model=List[UserResponseSchema])
 async def get_users(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
@@ -39,16 +39,16 @@ async def get_users(
     """Obtener lista de usuarios"""
     return await user_service.get_users(skip, limit, is_active)
 
-@router.put("/{user_id}", response_model=UserResponse)
+@router.put("/{user_id}", response_model=UserResponseSchema)
 async def update_user(
     user_id: int,
-    user_data: UserUpdate,
+    user_data: UserUpdateSchema,
     user_service: UserService = Depends(get_user_service)
 ):
     """Actualizar usuario"""
     return await user_service.update_user(user_id, user_data)
 
-@router.patch("/{user_id}/toggle-status", response_model=UserResponse)
+@router.patch("/{user_id}/toggle-status", response_model=UserResponseSchema)
 async def toggle_user_status(
     user_id: int,
     user_service: UserService = Depends(get_user_service)
@@ -56,7 +56,7 @@ async def toggle_user_status(
     """Cambiar estado activo/inactivo"""
     return await user_service.toggle_user_status(user_id)
 
-@router.delete("/{user_id}/soft", response_model=UserResponse)
+@router.delete("/{user_id}/soft", response_model=UserResponseSchema)
 async def soft_delete_user(
     user_id: int,
     user_service: UserService = Depends(get_user_service)

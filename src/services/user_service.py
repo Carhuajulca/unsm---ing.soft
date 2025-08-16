@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from src.repositories.user_repository import UserRepository
-from src.schemas.users.user import UserCreate, UserUpdate
+from src.schemas.user_schema import UserCreateSchema, UserUpdateSchema
 from src.models.users import User
 from typing import List, Optional
 
@@ -8,7 +8,7 @@ class UserService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    async def create_user(self, user_data: UserCreate) -> User:
+    async def create_user(self, user_data: UserCreateSchema) -> User:
         """Crear un nuevo usuario con validaciones de negocio"""
         # Validación: email único
         existing_email = await self.user_repository.get_by_email(user_data.email)
@@ -19,7 +19,7 @@ class UserService:
             )
 
         # Validación: username único
-        existing_username = await self.user_repository.get_by_username(user_data.name)
+        existing_username = await self.user_repository.get_by_username(user_data.first_name)
         if existing_username:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -28,7 +28,8 @@ class UserService:
 
         # Preparar datos para el repository
         user_dict = {
-            "name": user_data.name,
+            "first_name": user_data.first_name,
+            "last_name": user_data.last_name,
             "email": user_data.email,
             "is_active": user_data.is_active
         }
@@ -50,9 +51,9 @@ class UserService:
         """Obtener usuario por email"""
         return await self.user_repository.get_by_email(email)
 
-    async def get_user_by_username(self, username: str) -> Optional[User]:
+    async def get_user_by_username(self, first_name: str) -> Optional[User]:
         """Obtener usuario por username"""
-        return await self.user_repository.get_by_username(username)
+        return await self.user_repository.get_by_username(first_name)
 
     async def get_users(
         self, 
@@ -73,7 +74,7 @@ class UserService:
         """Contar total de usuarios"""
         return await self.user_repository.count(is_active)
 
-    async def update_user(self, user_id: int, user_data: UserUpdate) -> User:
+    async def update_user(self, user_id: int, user_data: UserUpdateSchema) -> User:
         """Actualizar usuario con validaciones de negocio"""
         # Verificar que el usuario existe
         existing_user = await self.get_user_by_id(user_id)

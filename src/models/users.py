@@ -7,14 +7,17 @@ class User(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True, nullable=False)
-    name = Column(String, nullable=False)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    email_verified_at = Column(DateTime(timezone=True), nullable=True)
     is_active = Column(Boolean, default=True)
-    hashed_password = Column(String, nullable=True)  # Para login tradicional
+    hashed_password = Column(String(255), nullable=True)  # Para login tradicional
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    last_login_at = Column(DateTime(timezone=True), nullable=True)
 
     # # Campos para OAuth2
-    # provider = Column(String, nullable=True)  # 'google', 'facebook', 'github', etc.
+    provider = Column(String, nullable=True)  # 'google', 'facebook', 'github', etc.
     # provider_id = Column(String, nullable=True)  # ID del usuario en el proveedor
     # access_token = Column(Text, nullable=True)  # Token de acceso (puede ser largo)
     # refresh_token = Column(Text, nullable=True)  # Token para renovar el access_token
