@@ -17,6 +17,10 @@ python-dotenv = "*"
 pydantic-settings = "*"
 alembic = "*"
 pydantic = {extras = ["email"], version = "*"}
+email-validator = "*"
+python-multipart = "*"
+bcrypt = "4.0.1"
+requests = "*"
 
 [dev-packages]
 

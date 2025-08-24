@@ -1,8 +1,8 @@
-"""migracion de las tablas categories, products, product_image, product_variants v.3
+"""seguridad jwt
 
-Revision ID: c83d12ac26e3
-Revises: c4c7a2be816f
-Create Date: 2025-08-16 19:15:18.490063
+Revision ID: fff666d07672
+Revises: 168bd6356b78
+Create Date: 2025-08-23 19:45:26.200680
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c83d12ac26e3'
-down_revision: Union[str, Sequence[str], None] = 'c4c7a2be816f'
+revision: str = 'fff666d07672'
+down_revision: Union[str, Sequence[str], None] = '168bd6356b78'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -40,15 +40,16 @@ def upgrade() -> None:
     op.create_table('products',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
-    sa.Column('sluck', sa.String(), nullable=False),
+    sa.Column('slug', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
-    sa.Column('price', sa.Numeric(), nullable=False),
-    sa.Column('compare_price', sa.Numeric(), nullable=True),
+    sa.Column('price', sa.Numeric(precision=10, scale=2), nullable=False),
+    sa.Column('compare_price', sa.Numeric(precision=10, scale=2), nullable=True),
     sa.Column('sku', sa.String(), nullable=False),
-    sa.Column('category', sa.String(), nullable=False),
+    sa.Column('category_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('sku'),
-    sa.UniqueConstraint('sluck')
+    sa.UniqueConstraint('slug')
     )
     op.create_index(op.f('ix_products_id'), 'products', ['id'], unique=False)
     op.create_table('product_images',

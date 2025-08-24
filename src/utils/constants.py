@@ -1,1 +1,0 @@
-# Constantes globales para la aplicación FastAPI

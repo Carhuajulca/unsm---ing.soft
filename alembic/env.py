@@ -13,21 +13,19 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # Cargar variables de entorno
 load_dotenv()
 
-# Importar Base
+# Importar configuración y Base
+from src.core.config import settings
 from src.database import Base
 
-# 🔹 Importar dinámicamente todos los modelos en src/models
-package_dir = os.path.join(os.path.dirname(__file__), "..", "src", "models")
-package_dir = os.path.abspath(package_dir)
-
-for (_, module_name, _) in pkgutil.iter_modules([package_dir]):
-    importlib.import_module(f"src.models.{module_name}")
+# Importar todos los modelos para que Alembic los detecte
+from src.user.models import user_model, roles_model, permission_model
+from src.product.models import category_model, product_model
 
 # Configuración Alembic
 config = context.config
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL no está configurada en el .env")
+
+# Usar la URL de la configuración centralizada
+DATABASE_URL = settings.get_sync_database_url
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 if config.config_file_name is not None:
@@ -37,6 +35,9 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
+    """
+    Ejecuta migraciones en modo offline.
+    """
     context.configure(
         url=config.get_main_option("sqlalchemy.url"),
         target_metadata=target_metadata,
@@ -48,6 +49,9 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+    """
+    Ejecuta migraciones en modo online.
+    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",

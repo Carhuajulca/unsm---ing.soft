@@ -1,1 +1,0 @@
-# Funciones auxiliares para la gestión de usuarios en FastAPI

@@ -1,8 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func
-from src.models.users import User
+from src.user.models.user_model import User
 from typing import List, Optional
-from .base_repository import BaseRepository
+from src.core.base_repository import BaseRepository
+from sqlalchemy.exc import IntegrityError
 
 class UserRepository(BaseRepository[User]):
     def __init__(self, db: AsyncSession):
@@ -13,8 +14,12 @@ class UserRepository(BaseRepository[User]):
        
         db_user = User(**user_data)
         self.db.add(db_user)
-        await self.db.commit()
-        await self.db.refresh(db_user)
+        try:
+            await self.db.commit()
+            await self.db.refresh(db_user)
+        except IntegrityError:
+            await self.db.rollback()
+            raise
         return db_user
 
     async def get_by_id(self, user_id: int) -> Optional[User]:
@@ -28,13 +33,13 @@ class UserRepository(BaseRepository[User]):
         return result.scalar_one_or_none()
 
     async def get_by_username(self, first_name: str) -> Optional[User]:
-        """Obtener usuario por nombre de usuario"""
+        """Obtener usuario por nombre"""
         result = await self.db.execute(select(User).where(User.first_name == first_name))
         return result.scalar_one_or_none()
     
-    async def get_by_username(self, last_name: str) -> Optional[User]:
+    async def get_by_lastname(self, last_name: str) -> Optional[User]:
         """Obtener usuario por apellido"""
-        result = await self.db.execute(select(User).where(User.first_name == last_name))
+        result = await self.db.execute(select(User).where(User.last_name == last_name))
         return result.scalar_one_or_none()
 
     async def get_all(
@@ -89,9 +94,9 @@ class UserRepository(BaseRepository[User]):
         )
         return result.scalar_one_or_none() is not None
 
-    async def exists_by_username_excluding_id(self, username: str, user_id: int) -> bool:
-        """Verificar si existe un username excluyendo un ID específico"""
+    async def exists_by_first_name_excluding_id(self, first_name: str, user_id: int) -> bool:
+        """Verificar si existe un nombre excluyendo un ID específico"""
         result = await self.db.execute(
-            select(User).where(User.name == username, User.id != user_id)
+            select(User).where(User.first_name == first_name, User.id != user_id)
         )
         return result.scalar_one_or_none() is not None

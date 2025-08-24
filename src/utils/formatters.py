@@ -1,1 +1,0 @@
-# Formateadores para la gestión de usuarios en FastAPI
