@@ -27,3 +27,4 @@ class BaseRepository(ABC, Generic[T]):
     @abstractmethod
     async def delete(self, id: int) -> bool:
         pass
+

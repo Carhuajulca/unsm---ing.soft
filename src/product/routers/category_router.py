@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database import get_db
-from src.product.repositories.category_repository import CategoryRepository
+from src.product.repository.category_repository import CategoryRepository
 from src.product.services.category_service import CategoryService
 from src.product.schemas.category_schema import CategoryResponseSchema, CategoryCreateSchema, CategoryUpdateSchema
 from typing import List, Optional

@@ -2,7 +2,8 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func, and_, or_, desc, asc
 from sqlalchemy.orm import selectinload, joinedload
-from src.models.product_models import Category, Product, ProductImage, ProductVariant
+from src.product.models.product_model import  Product, ProductImage, ProductVariant
+from src.product.models.category_model import Category
 from .base_repository import BaseRepository
 
 

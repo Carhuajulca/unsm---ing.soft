@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from jose import jwt
+from jose import jwt, JWTError, ExpiredSignatureError
 from src.core.config import settings
 from passlib.context import CryptContext
 from typing import Optional
@@ -24,10 +24,19 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
         str: Token JWT codificado
     """
     to_encode = data.copy()
-    expire = datetime.now() + (expires_delta or timedelta(
+    # Ensure 'sub' (subject) is a string: some JWT libraries require it.
+    if "sub" in to_encode and to_encode["sub"] is not None:
+        # Convert common numeric IDs to string to avoid JWTClaimsError from jose
+        to_encode["sub"] = str(to_encode["sub"])
+    # Use UTC to avoid timezone-related expiration issues
+    expire = datetime.utcnow() + (expires_delta or timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     ))
-    to_encode.update({"exp": expire})
+
+    # JWT 'exp' claim should be a numeric timestamp (seconds since epoch).
+    # Storing it as an int avoids JSON serialization issues and makes
+    # expiration checks reliable across libraries/implementations.
+    to_encode.update({"exp": int(expire.timestamp())})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 def verify_access_token(token: str) -> Optional[dict]:
@@ -43,7 +52,13 @@ def verify_access_token(token: str) -> Optional[dict]:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         return payload
-    except jwt.JWTError:
+    except ExpiredSignatureError:
+        # Token expired
+        return None
+    except JWTError as e:
+        # Any other error (invalid signature, malformed token, wrong claim types, etc.)
+        # Return None but keep exception available for logging if needed.
+        _decode_error = e
         return None
 
 def hash_password(password: str) -> str:

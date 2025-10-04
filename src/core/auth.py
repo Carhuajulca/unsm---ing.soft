@@ -42,14 +42,25 @@ async def get_current_user(
         )
     
     # Extraer el ID del usuario del token
-    user_id: Optional[int] = payload.get("sub")
-    if user_id is None:
+    raw_sub = payload.get("sub")
+    if raw_sub is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido: falta ID de usuario",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
+    # Aceptar que 'sub' venga como string (la librería jose espera string)
+    # Convertir a int para buscar en la base de datos.
+    try:
+        user_id = int(raw_sub)
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido: formato de ID de usuario incorrecto",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     # Obtener el usuario de la base de datos
     user_repository = UserRepository(db)
     user = await user_repository.get_by_id(user_id)

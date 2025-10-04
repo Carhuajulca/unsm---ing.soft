@@ -12,7 +12,8 @@ from src.user.schemas.auth_schema import (
 )
 from src.core.auth import get_current_user
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+# router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter()
 
 async def authenticate_user(email: str, password: str, db: AsyncSession) -> User:
     """

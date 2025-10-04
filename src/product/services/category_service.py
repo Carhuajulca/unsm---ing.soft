@@ -1,17 +1,17 @@
 from fastapi import HTTPException, status
 from typing import List, Optional
-from src.product.repositories.category_repository import CategoryRepository
+from src.product.repository.category_repository import CategoryRepository
 from src.product.schemas.category_schema import (
     CategoryCreateSchema,
     CategoryUpdateSchema,
     CategoryResponseSchema,
 )
-from src.product.models.category_model import Category
+
 
 
 class CategoryService:
     def __init__(self, repository: CategoryRepository):
-        self.repository = repository
+        self.repository = repository  
 
     async def get_all_categories(self) -> List[CategoryResponseSchema]:
         categories = await self.repository.get_all()

@@ -8,7 +8,7 @@ from src.core.config import settings
 # Esta es la clase base de todos nuestros modelos
 Base = declarative_base()
 
-engine = create_async_engine(settings.get_database_url, echo=True, future=True, pool_pre_ping=True, pool_recycle=300)
+engine = create_async_engine(settings.get_async_database_url, echo=True, future=True, pool_pre_ping=True, pool_recycle=300)
 SessionLocal = sessionmaker( autoflush=False, bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 
